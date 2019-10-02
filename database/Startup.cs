@@ -38,7 +38,7 @@ namespace database
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>()
+            services.AddIdentity<IdentityUser,IdentityRole>()
                 .AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
@@ -46,7 +46,7 @@ namespace database
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -65,7 +65,7 @@ namespace database
             app.UseCookiePolicy();
 
             app.UseAuthentication();
-
+            SampleData.InitializeAsync(serviceProvider).Wait();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

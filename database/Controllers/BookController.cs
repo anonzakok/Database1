@@ -24,7 +24,7 @@ namespace database.Controllers
             var model = await _context.Books.ToListAsync();
             return View(model);
         }
-        [Authorize]
+        [Authorize(Roles = "User")]
         public IActionResult AddBook()
         {
             return View();
@@ -32,7 +32,7 @@ namespace database.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
+        [Authorize(Roles = "User")]
         public async Task<IActionResult> AddBook(Book model)
         {
             if(ModelState.IsValid)
@@ -51,7 +51,7 @@ namespace database.Controllers
             }
             return View(model);
         }
-        [Authorize]
+        [Authorize(Roles = "User")]
         public async Task<IActionResult> BookEdit(int Id)
         {
 
@@ -67,7 +67,7 @@ namespace database.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
+        [Authorize(Roles = "User")]
         public async Task<IActionResult> EditBook(Book model)
         {
             if (ModelState.IsValid)
@@ -77,13 +77,14 @@ namespace database.Controllers
                 {
                     book.Name = model.Name;
                     book.Price = model.Price;
+                    book.BookType = model.BookType;
                     await _context.SaveChangesAsync();
                 }
                 return RedirectToAction("Index");
             }
             return View(model);
         }
-        [Authorize]
+        [Authorize(Roles ="Administrator")]
         public async Task<IActionResult> BookDelete(int Id)
         {
             var book = await _context.Books.FirstOrDefaultAsync(anon => anon.Id == Id);
